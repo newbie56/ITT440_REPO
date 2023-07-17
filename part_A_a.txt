@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
+
+#define childNum 3
+
+int pipes[childNum][2]; // Array to hold pipe file descriptors
+
+void childHandler(int sig) {
+    printf("Child[%d]: Interrupt received from parent.\n", getpid());
+    exit(EXIT_SUCCESS);
+}
+
+int main() {
+    pid_t childPids[childNum];
+    int i;
+
+    for (i = 0; i < childNum; i++) {
+        if (pipe(pipes[i]) == -1) {
+            perror("pipe");
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    for (i = 0; i < childNum; i++) {
+        childPids[i] = fork();
+
+
+        if (childPids[i] == -1) {
+            perror("fork");
+            exit(EXIT_FAILURE);
+        } else if (childPids[i] == 0) {
+
+            close(pipes[i][1]);
+
+            signal(SIGINT, childHandler);
+
+            char message[100];
+            read(pipes[i][0], message, sizeof(message));
+            printf("\nChild[%d]: Received Carrot: %s\n", getpid(), message);
+
+            close(pipes[i][0]); // Close read end of the pipe
+            while(1){
+            }
+            exit(EXIT_SUCCESS);
+        } else {
+            // PARENT
+            close(pipes[i][0]); // Close read end of the pipe
+
+            char message[100];
+            sprintf(message, "Carrot from Parent[%d] to Child[%d]", getpid(), ch
+            printf("\nParent[%d]: Sending Carrot to Child[%d]: %s\n", getpid(),
+            write(pipes[i][1], message, sizeof(message));
+
+            close(pipes[i][1]); // Close write end of the pipe
+        }
+    }
+    //signal handler
+    while (1) {
+
+    }
+    //waiting for child
+    for (i = 0; i < childNum; i++) {
+        wait(NULL);
+    }
+
+    return 0;
+}

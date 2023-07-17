@@ -1,0 +1,24 @@
+import socket
+
+def checkPrime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n**0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+def serverRun():
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    server_socket.bind(('127.0.0.1', 8080))
+    print("Server listening on port 8080...")
+
+    while True:
+        data, client_address = server_socket.recvfrom(1024)
+        number = int(data.decode())
+
+        result = "Prime" if checkPrime(number) else "Not Prime"
+        server_socket.sendto(result.encode(), client_address)
+
+if __name__ == '__main__':
+    serverRun()

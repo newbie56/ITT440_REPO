@@ -1,0 +1,46 @@
+import threading
+
+class fibonacciSerThread(threading.Thread):
+    def run(self):
+        fib_list = [0, 1]
+        while fib_list[-1] + fib_list[-2] <= 10000:
+            fib_list.append(fib_list[-1] + fib_list[-2])
+        print("Fibonacci Series=")
+        print("First Number:", fib_list[0])
+        print("In-between Numbers:", fib_list[1:-1][:5])
+        print("Last Number:", fib_list[-1])
+        print()
+
+
+class squareNumThread(threading.Thread):
+    def run(self):
+        square_list = [x**2 for x in range(1, 101)]
+        print("Square Numbers:")
+        print("First Number=", square_list[0])
+        print("In-between Numbers:", square_list[1:-1][:5])
+        print("Last Number:", square_list[-1])
+        print()
+
+
+class cubeNumThread(threading.Thread):
+    def run(self):
+        cube_list = [x**3 for x in range(1, 101)]
+        print("Cube Numbers=")
+        print("First Number:", cube_list[0])
+        print("In-between Numbers:", cube_list[1:-1][:5])
+        print("Last Number:", cube_list[-1])
+        print()
+
+
+if __name__ == '__main__':
+    fib_thread = fibonacciSerThread()
+    square_thread = squareNumThread()
+    cube_thread = cubeNumThread()
+
+    fib_thread.start()
+    square_thread.start()
+    cube_thread.start()
+
+    fib_thread.join()
+    square_thread.join()
+    cube_thread.join()
